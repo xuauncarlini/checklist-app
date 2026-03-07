@@ -1,5 +1,5 @@
 import React, { useState } from "react"
-import { View, Alert, Button, StyleSheet, TouchableOpacity, Text, ScrollView } from "react-native"
+import { View, Alert, Button, StyleSheet, TouchableOpacity, Text, ScrollView, KeyboardAvoidingView, Platform } from "react-native"
 import ItemChecklist from "../components/ItemChecklist"
 import { saveCheckList } from "../storage/checklistStorage"
 import { SafeAreaView } from "react-native-safe-area-context"
@@ -57,31 +57,35 @@ Problemas: ${problem.join(", ") || "Nenhum"}`
 
     <SafeAreaView style={{ flex: 1 }}>
 
-      <ScrollView contentContainerStyle={styles.container}>
+      <KeyboardAvoidingView
+        style={{ flex: 1 }}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+      >
+        <ScrollView contentContainerStyle={styles.container}>
 
-        {ITEMS.map(item => (
-          <ItemChecklist
-            key={item}
-            label={item}
-            onChange={(data) => setItem(item, data)}
-          />
-        ))}
+          {ITEMS.map(item => (
+            <ItemChecklist
+              key={item}
+              label={item}
+              onChange={(data) => setItem(item, data)}
+            />
+          ))}
 
-      </ScrollView>
+        </ScrollView>
 
-      <View style={styles.footer}>
-        <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
-          <Text style={styles.buttonText}>Salvar Checklist</Text>
-        </TouchableOpacity>
+        <View style={styles.footer}>
+          <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
+            <Text style={styles.buttonText}>Salvar Checklist</Text>
+          </TouchableOpacity>
 
-        <TouchableOpacity
-          style={styles.cancelButton}
-          onPress={() => navigation.goBack()}
-        >
-          <Text style={styles.buttonText}>Cancelar</Text>
-        </TouchableOpacity>
-      </View>
-
+          <TouchableOpacity
+            style={styles.cancelButton}
+            onPress={() => navigation.goBack()}
+          >
+            <Text style={styles.buttonText}>Cancelar</Text>
+          </TouchableOpacity>
+        </View>
+      </KeyboardAvoidingView>
     </SafeAreaView>
   )
 }
