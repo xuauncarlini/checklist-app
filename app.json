@@ -20,10 +20,16 @@
         "foregroundImage": "./assets/android-icon-foreground.png",
         "backgroundImage": "./assets/android-icon-background.png",
         "monochromeImage": "./assets/android-icon-monochrome.png"
-      }
+      },
+      "package": "com.xuaun.checklistapp"
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "3265806f-c3c1-498e-bce6-f4049253be5b"
+      }
     }
   }
 }
