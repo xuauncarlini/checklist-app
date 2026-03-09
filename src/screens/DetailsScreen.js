@@ -2,17 +2,21 @@ import React, { useState } from "react"
 import { View, Alert, Button, StyleSheet, TouchableOpacity, Text, ScrollView, KeyboardAvoidingView, Platform } from "react-native"
 import ItemChecklist from "../components/ItemChecklist"
 import { saveCheckList } from "../storage/checklistStorage"
-import { SafeAreaView } from "react-native-safe-area-context"
+import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context"
 
 const ITEMS = [
-  "Nível do óleo",
+  'Nível do óleo',
   'Pressão dos pneus',
   'Funcionamento das luzes',
   'Nível de água do radiador',
   'Estado dos freios'
 ]
 
+
 export default function DetailsScreen({ navigation }) {
+
+
+  const insets = useSafeAreaInsets()
 
   const [itemsData, setItemsData] = useState({})
 
@@ -24,6 +28,13 @@ export default function DetailsScreen({ navigation }) {
   }
 
   async function handleSave() {
+    if (Object.keys(itemsData).length < ITEMS.length) {
+      Alert.alert(
+        "Checklist incompleto",
+        "Por favor, marque todos os itens antes de salvar."
+      )
+      return
+    }
 
     const done = []
     const problem = []
@@ -54,15 +65,17 @@ Problemas: ${problem.join(", ") || "Nenhum"}`
   }
 
   return (
-
     <SafeAreaView style={{ flex: 1 }}>
 
       <KeyboardAvoidingView
         style={{ flex: 1 }}
         behavior={Platform.OS === "ios" ? "padding" : "height"}
+        keyboardVerticalOffset={100}
       >
-        <ScrollView contentContainerStyle={styles.container}>
-
+        <ScrollView
+          contentContainerStyle={[styles.container, { paddingBottom: insets.bottom + 120 }]}
+          keyboardShouldPersistTaps="handled"
+        >
           {ITEMS.map(item => (
             <ItemChecklist
               key={item}
@@ -70,22 +83,22 @@ Problemas: ${problem.join(", ") || "Nenhum"}`
               onChange={(data) => setItem(item, data)}
             />
           ))}
-
         </ScrollView>
-
-        <View style={styles.footer}>
-          <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
-            <Text style={styles.buttonText}>Salvar Checklist</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={styles.cancelButton}
-            onPress={() => navigation.goBack()}
-          >
-            <Text style={styles.buttonText}>Cancelar</Text>
-          </TouchableOpacity>
-        </View>
       </KeyboardAvoidingView>
+
+      <View style={[styles.footer, { paddingBottom: insets.bottom + 20 }]}>
+        <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
+          <Text style={styles.buttonText}>Salvar Checklist</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={styles.cancelButton}
+          onPress={() => navigation.goBack()}
+        >
+          <Text style={styles.buttonText}>Cancelar</Text>
+        </TouchableOpacity>
+      </View>
+
     </SafeAreaView>
   )
 }
@@ -95,7 +108,16 @@ const styles = StyleSheet.create({
     padding: 20
   },
   footer: {
-    padding: 20
+    position: "absolute",
+    bottom: 0,
+    left: 0,
+    right: 0,
+    padding: 20,
+    backgroundColor: "#fff"
+  },
+
+  wrapper: {
+    flex: 1,
   },
 
   saveButton: {
@@ -107,7 +129,7 @@ const styles = StyleSheet.create({
   },
 
   cancelButton: {
-    backgroundColor: "#9E9E9E",
+    backgroundColor: "#af0000",
     padding: 15,
     borderRadius: 10,
     alignItems: "center"
